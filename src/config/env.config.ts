@@ -6,7 +6,7 @@ interface EnvConfig {
   JWT_SECRET: string;
   JWT_EXPIRES_IN: string;
   NODE_ENV: string;
-  PORT: number;
+  PORT?: number | string;
   CLIENT_ORIGIN: string;
 }
 
@@ -15,7 +15,7 @@ export const envVars: EnvConfig = {
   JWT_SECRET: process.env.JWT_SECRET || "",
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "",
   NODE_ENV: process.env.NODE_ENV || "",
-  PORT: process.env.PORT as number | string as number,
+  PORT: process.env.PORT,
   CLIENT_ORIGIN: process.env.CLIENT_ORIGIN || "http://localhost:3000",
 };
 
