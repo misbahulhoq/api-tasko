@@ -8,7 +8,22 @@ interface EnvConfig {
   NODE_ENV: string;
   PORT?: number | string;
   CLIENT_ORIGIN: string;
+  SALT_ROUND: number;
 }
+
+const requiredEnvVars: (keyof EnvConfig)[] = [
+  "MONGO_URI",
+  "JWT_SECRET",
+  "JWT_EXPIRES_IN",
+  "SALT_ROUND",
+  "CLIENT_ORIGIN",
+];
+
+requiredEnvVars.map((key) => {
+  if (!process.env[key]) {
+    throw new Error(`Missing env variable: ${key}`);
+  }
+});
 
 export const envVars: EnvConfig = {
   MONGO_URI: process.env.MONGO_URI as string,
@@ -17,6 +32,7 @@ export const envVars: EnvConfig = {
   NODE_ENV: process.env.NODE_ENV || "",
   PORT: process.env.PORT,
   CLIENT_ORIGIN: process.env.CLIENT_ORIGIN || "http://localhost:3000",
+  SALT_ROUND: (process.env.SALT_ROUND || 10) as number,
 };
 
 export default envVars;
