@@ -21,7 +21,8 @@
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.18.0",
-    "mongoose": "^8.16.5"
+    "mongoose": "^8.16.5",
+    "nodemailer": "^7.0.5"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
@@ -29,6 +30,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/nodemailer": "^6.4.17",
     "bcrypt": "latest",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"

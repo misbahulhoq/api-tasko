@@ -5,6 +5,7 @@ import cors from "cors";
 import envVars from "./config/env.config";
 import dbConnect from "./config/db.config";
 import { globalErrorHandler } from "./utils/globalErrorHandler";
+import { routes } from "./routes";
 
 const app = express();
 dbConnect();
@@ -19,6 +20,7 @@ app.use(
 );
 app.use(cookieParser());
 app.use(helmet());
+app.use("/api/v1", routes);
 
 // error handler middleware, it should be the last middleware
 app.use(globalErrorHandler);
