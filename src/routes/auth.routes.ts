@@ -6,7 +6,7 @@ const router = Router();
 router.post("/signup", AuthControllers.signUpController);
 router.get("/get-email", AuthControllers.sendUsersEmail);
 router.post("/login", AuthControllers.loginController);
-router.post("/verify-account", AuthControllers.verifyLoginCodeController);
-// router.post("/verify-login");
+router.post("/verify-login", AuthControllers.verifyLoginCodeController);
+router.post("/request-new-otp", AuthControllers.getNewVerificationCode);
 
 export const AuthRoutes = router;

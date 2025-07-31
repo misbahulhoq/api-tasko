@@ -1,8 +1,15 @@
 import { Request, Response } from "express";
-import { login, signUpUser, verifyLoginCode } from "../services/auth.service";
+import jwt from "jsonwebtoken";
+import {
+  generateNewVerificationCode,
+  login,
+  signUpUser,
+  verifyLoginCode,
+} from "../services/auth.service";
 import sendResponse from "../utils/sendResponse";
 import User from "../models/user.model";
 import AppError from "../utils/AppError";
+import envVars from "../config/env.config";
 
 const signUpController = async (req: Request, res: Response) => {
   const { fullName, email, password } = req.body;
@@ -19,7 +26,6 @@ const signUpController = async (req: Request, res: Response) => {
     email: newUser.email,
     isVerified: newUser.isVerified,
   };
-  res.cookie("email", newUser.email, { httpOnly: true, sameSite: "none" });
   sendResponse(res, {
     statusCode: 201,
     success: true,
@@ -32,7 +38,7 @@ const sendUsersEmail = async (req: Request, res: Response) => {
   const email = req.cookies.email;
 
   if (!email) {
-    throw new AppError(404, "Provide an email address.");
+    throw new AppError(400, "Provide an email address.");
   }
   const user = await User.findOne({ email });
   if (!user) {
@@ -58,10 +64,30 @@ const loginController = async (req: Request, res: Response) => {
   }
 
   await login(email, password);
+  res.cookie("email", email, { httpOnly: true, sameSite: "lax" });
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: "Login successful. Redirecting to login page..",
+    message: "Login successful. Redirecting to veficiation page..",
+    data: null,
+  });
+};
+
+const getNewVerificationCode = async (req: Request, res: Response) => {
+  const email = req.cookies.email;
+  if (!email) {
+    return sendResponse(res, {
+      message: "Email is required.",
+      success: false,
+      data: null,
+      statusCode: 400,
+    });
+  }
+  await generateNewVerificationCode(email);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Verification code sent.",
     data: null,
   });
 };
@@ -77,14 +103,18 @@ const verifyLoginCodeController = async (req: Request, res: Response) => {
       statusCode: 400,
     });
   }
-  await verifyLoginCode(email, code);
+  const user = await verifyLoginCode(email, code);
+  const token = jwt.sign(
+    { email: user.email, _id: user._id },
+    envVars.JWT_SECRET
+  );
+  res.cookie("accessToken", token, { httpOnly: true, sameSite: "lax" });
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: "Account verified successfully.",
+    message: "Login verified. Redirecting to dashboard.",
     data: null,
   });
-  res.redirect("/login");
 };
 
 export const AuthControllers = {
@@ -92,4 +122,5 @@ export const AuthControllers = {
   verifyLoginCodeController,
   sendUsersEmail,
   loginController,
+  getNewVerificationCode,
 };

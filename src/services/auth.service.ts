@@ -26,7 +26,6 @@ export const login = async (email: string, password: string): Promise<void> => {
   if (!user) {
     throw new AppError(404, "Invalid credentials.");
   }
-  console.log("Getting info in services", { email, password });
 
   const isPasswordValid = await user.comparePassword(password);
   if (!isPasswordValid) {
@@ -34,18 +33,32 @@ export const login = async (email: string, password: string): Promise<void> => {
   }
 
   const verificationCode = generateVerificationCode();
-  // user.loginVerification = {
-  //   code: verificationCode,
-  //   expires: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes
-  // };
-  // await user.save();
+  user.loginVerification = {
+    code: verificationCode,
+    expires: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes
+  };
+  await user.save();
+  await sendVerificationEmail(email, verificationCode);
+};
+
+export const generateNewVerificationCode = async (email: string) => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new AppError(404, "User not found.");
+  }
+  const verificationCode = generateVerificationCode();
+  user.loginVerification = {
+    code: verificationCode,
+    expires: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes
+  };
+  await user.save();
   await sendVerificationEmail(email, verificationCode);
 };
 
 export const verifyLoginCode = async (
   email: string,
   code: string
-): Promise<void> => {
+): Promise<IUser> => {
   const user = await User.findOne({
     "loginVerification.code": code,
     email,
@@ -66,4 +79,5 @@ export const verifyLoginCode = async (
   // 3. If the code is valid and not expired, update the user
   user.isVerified = true;
   await user.save();
+  return user;
 };
