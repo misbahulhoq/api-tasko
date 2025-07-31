@@ -35,14 +35,22 @@ export const verifyUserAccount = async (
     throw new AppError(400, "Invalid verification code.");
   }
 
-  if (
-    (user.signupVerification && user.signupVerification.expires < new Date()) ||
-    user.signupVerification.code !== code
-  ) {
+  if (!user.signupVerification) {
+    throw new AppError(
+      400,
+      "No verification code found. Please request a new one."
+    );
+  }
+
+  if (user.signupVerification.expires < new Date()) {
     throw new AppError(
       400,
       "Verification code has expired. Please request a new one."
     );
+  }
+
+  if (user.signupVerification.code !== code) {
+    throw new AppError(400, "Invalid verification code.");
   }
 
   // 3. If the code is valid and not expired, update the user
