@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import envVars from "./config/env.config";
 import dbConnect from "./config/db.config";
-import { globalErrorHandler } from "./middlewares/globalErrorHandler";
+import { globalErrorHandler } from "./middlewares/error.middleware";
 import { routes } from "./routes";
 
 const app = express();

@@ -1,6 +1,6 @@
 import User, { IUser } from "../models/user.model";
 import AppError from "../utils/AppError";
-import { sendVerificationEmail } from "../utils/emailService";
+import { sendVerificationEmail } from "../utils/email.validator";
 import generateVerificationCode from "../utils/generateRandomCode";
 
 type SignUpInput = Pick<IUser, "fullName" | "email" | "password">;
