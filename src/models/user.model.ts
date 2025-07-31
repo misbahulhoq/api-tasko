@@ -1,16 +1,13 @@
 import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcryptjs";
 import envVars from "../config/env.config";
+import generateVerificationCode from "../utils/generateRandomCode";
 
 export interface IUser extends Document {
   fullName: string;
   email: string;
   password: string;
   isVerified: boolean;
-  signupVerification?: {
-    code: string;
-    expires: Date;
-  };
   loginVerification?: {
     code: string;
     expires: Date;
@@ -42,15 +39,7 @@ const userSchema = new Schema<IUser>(
       type: Boolean,
       default: false,
     },
-    signupVerification: new Schema(
-      {
-        code: { type: String, required: false },
-        expires: { type: Date, default: Date.now() + 5 * 60 * 1000 },
-      },
-      {
-        _id: false,
-      }
-    ),
+
     loginVerification: new Schema(
       {
         code: { type: String, required: false },
@@ -72,19 +61,6 @@ userSchema.pre<IUser>("save", async function (next) {
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, envVars.SALT_ROUND);
   }
-
-  // Generate signup verification code only for a new user
-  if (this.isNew) {
-    const verificationCode = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
-
-    this.signupVerification = {
-      code: verificationCode,
-      expires: new Date(Date.now() + 5 * 60 * 1000), // Code expires in 5 minutes
-    };
-  }
-
   next();
 });
 

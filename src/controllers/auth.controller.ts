@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { signUpUser, verifyUserAccount } from "../services/auth.service";
+import { signUpUser, verifyLoginCode } from "../services/auth.service";
 import sendResponse from "../utils/sendResponse";
 import User from "../models/user.model";
 import AppError from "../utils/AppError";
@@ -23,7 +23,7 @@ const signUpController = async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: 201,
     success: true,
-    message: "User created successfully.",
+    message: "Signup successful. Redirecting to login page..",
     data: user,
   });
 };
@@ -46,7 +46,7 @@ const sendUsersEmail = async (req: Request, res: Response) => {
   });
 };
 
-const verifyAccountController = async (req: Request, res: Response) => {
+const verifyLoginController = async (req: Request, res: Response) => {
   const { code } = req.body;
   const email = req.cookies.email;
   if (!email || !code) {
@@ -57,7 +57,7 @@ const verifyAccountController = async (req: Request, res: Response) => {
       statusCode: 400,
     });
   }
-  await verifyUserAccount(email, code);
+  await verifyLoginCode(email, code);
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -69,6 +69,6 @@ const verifyAccountController = async (req: Request, res: Response) => {
 
 export const AuthControllers = {
   signUpController,
-  verifyAccountController,
+  verifyLoginController,
   sendUsersEmail,
 };

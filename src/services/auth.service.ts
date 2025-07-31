@@ -1,6 +1,7 @@
 import User, { IUser } from "../models/user.model";
 import AppError from "../utils/AppError";
 import { sendVerificationEmail } from "../utils/emailService";
+import generateVerificationCode from "../utils/generateRandomCode";
 
 type SignUpInput = Pick<IUser, "fullName" | "email" | "password">;
 
@@ -16,8 +17,6 @@ export const signUpUser = async (userData: SignUpInput): Promise<IUser> => {
     password: userData.password,
   });
   await newUser.save();
-  if (newUser.signupVerification?.code)
-    sendVerificationEmail(userData.email, newUser.signupVerification.code);
 
   return newUser;
 };
@@ -27,7 +26,7 @@ export const verifyUserAccount = async (
   code: string
 ): Promise<void> => {
   const user = await User.findOne({
-    "signupVerification.code": code,
+    "loginVerification.code": code,
     email,
   });
 
@@ -35,26 +34,15 @@ export const verifyUserAccount = async (
     throw new AppError(400, "Invalid verification code.");
   }
 
-  if (!user.signupVerification) {
-    throw new AppError(
-      400,
-      "No verification code found. Please request a new one."
-    );
+  if (user.loginVerification && user.loginVerification?.expires < new Date()) {
+    throw new AppError(400, "Verification code has expired.");
   }
 
-  if (user.signupVerification.expires < new Date()) {
-    throw new AppError(
-      400,
-      "Verification code has expired. Please request a new one."
-    );
-  }
-
-  if (user.signupVerification.code !== code) {
+  if (user.loginVerification?.code !== code) {
     throw new AppError(400, "Invalid verification code.");
   }
 
   // 3. If the code is valid and not expired, update the user
   user.isVerified = true;
-  user.signupVerification = undefined; // Clear the verification data
   await user.save();
 };
