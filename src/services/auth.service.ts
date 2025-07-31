@@ -21,7 +21,28 @@ export const signUpUser = async (userData: SignUpInput): Promise<IUser> => {
   return newUser;
 };
 
-export const verifyUserAccount = async (
+export const login = async (email: string, password: string): Promise<void> => {
+  const user = await User.findOne({ email }).select("+password");
+  if (!user) {
+    throw new AppError(404, "Invalid credentials.");
+  }
+  console.log("Getting info in services", { email, password });
+
+  const isPasswordValid = await user.comparePassword(password);
+  if (!isPasswordValid) {
+    throw new AppError(401, "Invalid credentials.");
+  }
+
+  const verificationCode = generateVerificationCode();
+  // user.loginVerification = {
+  //   code: verificationCode,
+  //   expires: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes
+  // };
+  // await user.save();
+  await sendVerificationEmail(email, verificationCode);
+};
+
+export const verifyLoginCode = async (
   email: string,
   code: string
 ): Promise<void> => {

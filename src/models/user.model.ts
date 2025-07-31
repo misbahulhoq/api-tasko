@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcryptjs";
 import envVars from "../config/env.config";
-import generateVerificationCode from "../utils/generateRandomCode";
+import jwt from "jsonwebtoken";
 
 export interface IUser extends Document {
   fullName: string;
@@ -12,6 +12,8 @@ export interface IUser extends Document {
     code: string;
     expires: Date;
   };
+  comparePassword: (password: string) => Promise<boolean>;
+  generateToken: () => string;
 }
 
 const userSchema = new Schema<IUser>(
@@ -55,6 +57,26 @@ const userSchema = new Schema<IUser>(
     timestamps: true,
   }
 );
+
+userSchema.methods.comparePassword = async function (
+  candidatePassword: string
+): Promise<boolean> {
+  const isMatch = await bcrypt.compare(candidatePassword, this.password);
+  return isMatch;
+};
+
+const expiresIn: string = envVars.JWT_EXPIRES_IN || "7d";
+userSchema.methods.generateToken = function (): string {
+  const token = jwt.sign(
+    {
+      _id: this._id,
+      email: this.email,
+    },
+    envVars.JWT_SECRET,
+    { expiresIn }
+  );
+  return token;
+};
 
 userSchema.pre<IUser>("save", async function (next) {
   // Hash password only if it has been modified (or is new)

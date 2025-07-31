@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { signUpUser, verifyLoginCode } from "../services/auth.service";
+import { login, signUpUser, verifyLoginCode } from "../services/auth.service";
 import sendResponse from "../utils/sendResponse";
 import User from "../models/user.model";
 import AppError from "../utils/AppError";
@@ -46,7 +46,27 @@ const sendUsersEmail = async (req: Request, res: Response) => {
   });
 };
 
-const verifyLoginController = async (req: Request, res: Response) => {
+const loginController = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return sendResponse(res, {
+      message: "Email and password are required.",
+      success: false,
+      data: null,
+      statusCode: 400,
+    });
+  }
+
+  await login(email, password);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Login successful. Redirecting to login page..",
+    data: null,
+  });
+};
+
+const verifyLoginCodeController = async (req: Request, res: Response) => {
   const { code } = req.body;
   const email = req.cookies.email;
   if (!email || !code) {
@@ -69,6 +89,7 @@ const verifyLoginController = async (req: Request, res: Response) => {
 
 export const AuthControllers = {
   signUpController,
-  verifyLoginController,
+  verifyLoginCodeController,
   sendUsersEmail,
+  loginController,
 };
