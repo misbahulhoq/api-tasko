@@ -81,3 +81,11 @@ export const verifyLoginCode = async (
   await user.save();
   return user;
 };
+
+export const getUserInfo = async (email: string): Promise<IUser> => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new AppError(404, "User not found.");
+  }
+  return user;
+};

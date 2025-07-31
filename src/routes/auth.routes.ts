@@ -8,6 +8,6 @@ router.get("/get-email", AuthControllers.sendUsersEmail);
 router.post("/login", AuthControllers.loginController);
 router.post("/verify-login", AuthControllers.verifyLoginCodeController);
 router.post("/request-new-otp", AuthControllers.getNewVerificationCode);
-// router.post("/me")
+router.post("/me", AuthControllers.getUserInfo);
 
 export const AuthRoutes = router;

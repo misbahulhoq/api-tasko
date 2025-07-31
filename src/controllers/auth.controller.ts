@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import {
   generateNewVerificationCode,
   login,
@@ -109,11 +109,36 @@ const verifyLoginCodeController = async (req: Request, res: Response) => {
     envVars.JWT_SECRET
   );
   res.cookie("accessToken", token, { httpOnly: true, sameSite: "lax" });
+  res.clearCookie("email", { httpOnly: true, sameSite: "lax" });
   sendResponse(res, {
     statusCode: 200,
     success: true,
     message: "Login verified. Redirecting to dashboard.",
     data: null,
+  });
+};
+
+const getUserInfo = async (req: Request, res: Response) => {
+  const accessToken = req.cookies.accessToken;
+  if (!accessToken) {
+    return sendResponse(res, {
+      message: "Invalid Access Token",
+      success: false,
+      data: null,
+      statusCode: 400,
+    });
+  }
+  const decoded = jwt.verify(accessToken, envVars.JWT_SECRET) as JwtPayload;
+  const user = await User.findOne({ email: decoded.email });
+
+  if (!user) {
+    throw new AppError(404, "User not found.");
+  }
+  return sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "User info fetched.",
+    data: user,
   });
 };
 
@@ -123,4 +148,5 @@ export const AuthControllers = {
   sendUsersEmail,
   loginController,
   getNewVerificationCode,
+  getUserInfo,
 };
