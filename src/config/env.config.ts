@@ -4,8 +4,7 @@ dotenv.config();
 interface EnvConfig {
   MONGO_URI: string;
   JWT_SECRET: string;
-  JWT_EXPIRES_IN: string;
-  NODE_ENV: string;
+  NODE_ENV: "development" | "production";
   PORT?: number | string;
   CLIENT_ORIGIN: string;
   SALT_ROUND: number;
@@ -16,7 +15,6 @@ interface EnvConfig {
 const requiredEnvVars: (keyof EnvConfig)[] = [
   "MONGO_URI",
   "JWT_SECRET",
-  "JWT_EXPIRES_IN",
   "SALT_ROUND",
   "CLIENT_ORIGIN",
   "EMAIL",
@@ -32,11 +30,12 @@ requiredEnvVars.map((key) => {
 export const envVars: EnvConfig = {
   MONGO_URI: process.env.MONGO_URI as string,
   JWT_SECRET: process.env.JWT_SECRET || "",
-  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "",
-  NODE_ENV: process.env.NODE_ENV || "",
+  NODE_ENV: (process.env.NODE_ENV || "development") as
+    | "development"
+    | "production",
   PORT: process.env.PORT,
   CLIENT_ORIGIN: process.env.CLIENT_ORIGIN || "http://localhost:3000",
-  SALT_ROUND: (process.env.SALT_ROUND || 10) as number,
+  SALT_ROUND: Number(process.env.SALT_ROUND || 10),
   EMAIL: process.env.EMAIL as string,
   EMAIL_APP_PASS: process.env.EMAIL_APP_PASS as string,
 };

@@ -15,11 +15,9 @@ export const signUpUser = async (userData: SignUpInput): Promise<IUser> => {
     email: userData.email,
     password: userData.password,
   });
-
+  await newUser.save();
   if (newUser.signupVerification?.code)
     sendVerificationEmail(userData.email, newUser.signupVerification.code);
-
-  await newUser.save();
 
   return newUser;
 };
@@ -37,7 +35,10 @@ export const verifyUserAccount = async (
     throw new AppError(400, "Invalid verification code.");
   }
 
-  if (user.signupVerification && user.signupVerification.expires < new Date()) {
+  if (
+    (user.signupVerification && user.signupVerification.expires < new Date()) ||
+    user.signupVerification.code !== code
+  ) {
     throw new AppError(
       400,
       "Verification code has expired. Please request a new one."
