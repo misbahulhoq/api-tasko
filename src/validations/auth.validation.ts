@@ -1,9 +1,9 @@
 import z from "zod";
 
 const signup = z.object({
-  fullName: z
-    .string("Full Name is required")
-    .min(3, "Full Name must be at least 3 characters long"),
+  name: z
+    .string("Name is required")
+    .min(3, "Name must be at least 3 characters long"),
   email: z
     .string("Email is required")
     .min(6, "Email must be at least 6 characters long"),

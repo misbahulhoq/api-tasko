@@ -12,8 +12,6 @@ export function globalErrorHandler(
 ) {
   const isMongooseError = error instanceof MongooseError;
   const isZodError = error instanceof ZodError;
-  if (isZodError)
-    console.log("Zod error caught from global error handler", error);
   let message = "Something went wrong";
   let statusCode = 500;
   if (envVars.NODE_ENV === "development") {
@@ -28,6 +26,9 @@ export function globalErrorHandler(
     if (error.name === "ValidationError") {
       error.message = error.message;
     }
+  } else if (isZodError) {
+    stack = error.stack;
+    message = error.message;
   }
   response.status(statusCode).send({
     success: false,

@@ -4,7 +4,7 @@ import envVars from "../config/env.config";
 import jwt from "jsonwebtoken";
 
 export interface IUser extends Document {
-  fullName: string;
+  name: string;
   email: string;
   password: string;
   isVerified: boolean;
@@ -18,9 +18,9 @@ export interface IUser extends Document {
 
 const userSchema = new Schema<IUser>(
   {
-    fullName: {
+    name: {
       type: String,
-      required: [true, "Full name is required"],
+      required: [true, "Name is required"],
     },
     email: {
       type: String,

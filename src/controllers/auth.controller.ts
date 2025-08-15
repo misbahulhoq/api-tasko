@@ -7,17 +7,17 @@ import AppError from "../utils/AppError";
 import envVars from "../config/env.config";
 
 const signUp = async (req: Request, res: Response) => {
-  const { fullName, email, password } = req.body;
-  if (!fullName || !email || !password) {
+  const { name, email, password } = req.body;
+  if (!name || !email || !password) {
     return res
       .status(400)
-      .json({ message: "Full name, email, and password are required." });
+      .json({ message: "Name, email, and password are required." });
   }
 
-  const newUser = await AuthServices.signUpUser({ fullName, email, password });
+  const newUser = await AuthServices.signUpUser({ name, email, password });
   const user = {
     _id: newUser._id,
-    fullName: newUser.fullName,
+    name: newUser.name,
     email: newUser.email,
     isVerified: newUser.isVerified,
   };

@@ -3,7 +3,7 @@ import AppError from "../utils/AppError";
 import { sendVerificationEmail } from "../utils/email.validator";
 import generateVerificationCode from "../utils/generateRandomCode";
 
-type SignUpInput = Pick<IUser, "fullName" | "email" | "password">;
+type SignUpInput = Pick<IUser, "name" | "email" | "password">;
 
 export const signUpUser = async (userData: SignUpInput): Promise<IUser> => {
   const existingUser = await User.findOne({ email: userData.email });
@@ -12,7 +12,7 @@ export const signUpUser = async (userData: SignUpInput): Promise<IUser> => {
   }
 
   const newUser = new User({
-    fullName: userData.fullName,
+    name: userData.name,
     email: userData.email,
     password: userData.password,
   });
