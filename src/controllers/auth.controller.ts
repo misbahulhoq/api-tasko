@@ -1,17 +1,12 @@
 import { Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import {
-  generateNewVerificationCode,
-  login,
-  signUpUser,
-  verifyLoginCode,
-} from "../services/auth.service";
+import AuthServices from "../services/auth.service";
 import sendResponse from "../utils/sendResponse";
 import User from "../models/user.model";
 import AppError from "../utils/AppError";
 import envVars from "../config/env.config";
 
-const signUpController = async (req: Request, res: Response) => {
+const signUp = async (req: Request, res: Response) => {
   const { fullName, email, password } = req.body;
   if (!fullName || !email || !password) {
     return res
@@ -19,7 +14,7 @@ const signUpController = async (req: Request, res: Response) => {
       .json({ message: "Full name, email, and password are required." });
   }
 
-  const newUser = await signUpUser({ fullName, email, password });
+  const newUser = await AuthServices.signUpUser({ fullName, email, password });
   const user = {
     _id: newUser._id,
     fullName: newUser.fullName,
@@ -52,7 +47,7 @@ const sendUsersEmail = async (req: Request, res: Response) => {
   });
 };
 
-const loginController = async (req: Request, res: Response) => {
+const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return sendResponse(res, {
@@ -83,7 +78,7 @@ const getNewVerificationCode = async (req: Request, res: Response) => {
       statusCode: 400,
     });
   }
-  await generateNewVerificationCode(email);
+  await AuthServices.generateNewVerificationCode(email);
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -92,7 +87,7 @@ const getNewVerificationCode = async (req: Request, res: Response) => {
   });
 };
 
-const verifyLoginCodeController = async (req: Request, res: Response) => {
+const verifyLoginCode = async (req: Request, res: Response) => {
   const { code } = req.body;
   const email = req.cookies.email;
   if (!email || !code) {
@@ -103,7 +98,7 @@ const verifyLoginCodeController = async (req: Request, res: Response) => {
       statusCode: 400,
     });
   }
-  const user = await verifyLoginCode(email, code);
+  const user = await AuthServices.verifyLoginCode(email, code);
   const token = jwt.sign(
     { email: user.email, _id: user._id },
     envVars.JWT_SECRET
@@ -143,10 +138,10 @@ const getUserInfo = async (req: Request, res: Response) => {
 };
 
 export const AuthControllers = {
-  signUpController,
-  verifyLoginCodeController,
+  signUp,
+  verifyLoginCode,
   sendUsersEmail,
-  loginController,
+  login,
   getNewVerificationCode,
   getUserInfo,
 };

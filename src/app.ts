@@ -6,11 +6,13 @@ import envVars from "./config/env.config";
 import dbConnect from "./config/db.config";
 import { globalErrorHandler } from "./middlewares/error.middleware";
 import { routes } from "./routes";
+import { swaggerSpec, swaggerUi } from "../swagger.config";
 
 const app = express();
 dbConnect();
 
 // middlewares
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(express.json());
 app.use(cookieParser());
 app.use(

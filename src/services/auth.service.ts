@@ -89,3 +89,13 @@ export const getUserInfo = async (email: string): Promise<IUser> => {
   }
   return user;
 };
+
+export const AuthServices = {
+  login,
+  signUpUser,
+  verifyLoginCode,
+  generateNewVerificationCode,
+  getUserInfo,
+};
+
+export default AuthServices;

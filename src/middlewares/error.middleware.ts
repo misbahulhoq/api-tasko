@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-
 import { MongooseError } from "mongoose";
 import envVars from "../config/env.config";
 import AppError from "../utils/AppError";
+import { ZodError } from "zod";
 
 export function globalErrorHandler(
   error: any,
@@ -11,6 +11,9 @@ export function globalErrorHandler(
   next: NextFunction
 ) {
   const isMongooseError = error instanceof MongooseError;
+  const isZodError = error instanceof ZodError;
+  if (isZodError)
+    console.log("Zod error caught from global error handler", error);
   let message = "Something went wrong";
   let statusCode = 500;
   if (envVars.NODE_ENV === "development") {
