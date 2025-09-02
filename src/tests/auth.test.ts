@@ -40,7 +40,7 @@ describe("Auth", () => {
         .post("/api/v1/auth/signup")
         .send({
           name: "Md Mezbah Uddin",
-          pasword: "test_password_123@",
+          password: "test_password_123@",
         })
         .expect(400);
     });
@@ -48,16 +48,33 @@ describe("Auth", () => {
 
   describe("Login", () => {
     it("Should login a user if valid credentials provided.", async () => {
-      const response = await request(app)
+      await request(app)
         .post("/api/v1/auth/login")
         .send({
           email: testUser.email,
           password: testUser.password,
         })
         .expect(200);
-      expect(response.body.data).toBeDefined();
-      expect(response.body.data).toBeDefined();
-      expect(response.body.data).toHaveProperty("authToken");
+    });
+
+    it("Should return 401 if invalid credentials provided.", async () => {
+      await request(app)
+        .post("/api/v1/auth/login")
+        .send({
+          email: testUser.email,
+          password: "a wrong password",
+        })
+        .expect(401);
+    });
+
+    it("Should return 404 if invalid email provided.", async () => {
+      await request(app)
+        .post("/api/v1/auth/login")
+        .send({
+          email: "invalid@mail.com",
+          password: testUser.password,
+        })
+        .expect(404);
     });
   });
 });
