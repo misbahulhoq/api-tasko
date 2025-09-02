@@ -49,7 +49,7 @@ const router = Router();
 router.post(
   "/signup",
   validateRequest(AuthValidatorSchemas.signup),
-  AuthControllers.signUp
+  AuthControllers.signup
 );
 router.get("/get-email", AuthControllers.sendUsersEmail);
 router.post("/login", AuthControllers.login);

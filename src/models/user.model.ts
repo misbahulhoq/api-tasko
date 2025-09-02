@@ -8,6 +8,7 @@ export interface IUser extends Document {
   email: string;
   password: string;
   isVerified: boolean;
+  role: "admin" | "user";
   loginVerification?: {
     code: string;
     expires: Date;
@@ -30,6 +31,11 @@ const userSchema = new Schema<IUser>(
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
         "Please provide a valid email address",
       ],
+    },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
     },
     password: {
       type: String,
@@ -65,7 +71,6 @@ userSchema.methods.comparePassword = async function (
   return isMatch;
 };
 
-const expiresIn: string = envVars.JWT_EXPIRES_IN || "7d";
 userSchema.methods.generateToken = function (): string {
   const token = jwt.sign(
     {
@@ -73,7 +78,7 @@ userSchema.methods.generateToken = function (): string {
       email: this.email,
     },
     envVars.JWT_SECRET,
-    { expiresIn }
+    { expiresIn: envVars.JWT_EXPIRES_IN as any }
   );
   return token;
 };

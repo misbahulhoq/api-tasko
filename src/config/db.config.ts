@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import envVars from "./env.config";
 
-export const dbConnect = async () => {
+const connectDb = async () => {
   try {
     await mongoose.connect(envVars.MONGO_URI);
     console.log("Database connected successfully..");
@@ -10,4 +10,14 @@ export const dbConnect = async () => {
   }
 };
 
-export default dbConnect;
+const disconnectDb = async () => {
+  try {
+    await mongoose.disconnect();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export { connectDb, disconnectDb };
+
+export default connectDb;

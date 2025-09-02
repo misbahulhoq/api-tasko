@@ -5,26 +5,34 @@ import generateVerificationCode from "../utils/generateRandomCode";
 
 type SignUpInput = Pick<IUser, "name" | "email" | "password">;
 
-export const signUpUser = async (userData: SignUpInput): Promise<IUser> => {
-  const existingUser = await User.findOne({ email: userData.email });
+export const signup = async (userData: SignUpInput): Promise<IUser> => {
+  const { email, password, name } = userData;
+  if (!email || !password || !name) {
+    throw new AppError(400, "Email, password and name are required.");
+  }
+
+  const existingUser = await User.findOne({ email });
   if (existingUser) {
     throw new AppError(409, "Email is already registered.");
   }
 
   const newUser = new User({
-    name: userData.name,
-    email: userData.email,
-    password: userData.password,
+    name,
+    email,
+    password,
   });
   await newUser.save();
-
   return newUser;
 };
 
-export const login = async (email: string, password: string): Promise<void> => {
+export const login = async (payload: {
+  email: string;
+  password: string;
+}): Promise<{ email: string }> => {
+  const { email, password } = payload;
   const user = await User.findOne({ email }).select("+password");
   if (!user) {
-    throw new AppError(404, "Invalid credentials.");
+    throw new AppError(404, "User not found.");
   }
 
   const isPasswordValid = await user.comparePassword(password);
@@ -39,6 +47,7 @@ export const login = async (email: string, password: string): Promise<void> => {
   };
   await user.save();
   await sendVerificationEmail(email, verificationCode);
+  return { email };
 };
 
 export const generateNewVerificationCode = async (email: string) => {
@@ -92,7 +101,7 @@ export const getUserInfo = async (email: string): Promise<IUser> => {
 
 export const AuthServices = {
   login,
-  signUpUser,
+  signup,
   verifyLoginCode,
   generateNewVerificationCode,
   getUserInfo,

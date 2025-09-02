@@ -6,15 +6,8 @@ import User from "../models/user.model";
 import AppError from "../utils/AppError";
 import envVars from "../config/env.config";
 
-const signUp = async (req: Request, res: Response) => {
-  const { name, email, password } = req.body;
-  if (!name || !email || !password) {
-    return res
-      .status(400)
-      .json({ message: "Name, email, and password are required." });
-  }
-
-  const newUser = await AuthServices.signUpUser({ name, email, password });
+const signup = async (req: Request, res: Response) => {
+  const newUser = await AuthServices.signup(req.body);
   const user = {
     _id: newUser._id,
     name: newUser.name,
@@ -48,18 +41,8 @@ const sendUsersEmail = async (req: Request, res: Response) => {
 };
 
 const login = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return sendResponse(res, {
-      message: "Email and password are required.",
-      success: false,
-      data: null,
-      statusCode: 400,
-    });
-  }
-
-  await login(email, password);
-  res.cookie("email", email, { httpOnly: true, sameSite: "lax" });
+  const user = await AuthServices.login(req.body);
+  res.cookie("email", user.email, { httpOnly: true, sameSite: "lax" });
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -138,7 +121,7 @@ const getUserInfo = async (req: Request, res: Response) => {
 };
 
 export const AuthControllers = {
-  signUp,
+  signup,
   verifyLoginCode,
   sendUsersEmail,
   login,

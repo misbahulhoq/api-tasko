@@ -3,13 +3,13 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import envVars from "./config/env.config";
-import dbConnect from "./config/db.config";
+import connectDb from "./config/db.config";
 import { globalErrorHandler } from "./middlewares/error.middleware";
 import { routes } from "./routes";
 import { swaggerSpec, swaggerUi } from "../swagger.config";
 
 const app = express();
-dbConnect();
+connectDb();
 
 // middlewares
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
