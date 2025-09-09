@@ -15,6 +15,7 @@ connectDb();
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(express.json());
 app.use(cookieParser());
+app.use(helmet());
 app.use(
   cors({
     origin: envVars.CLIENT_ORIGIN,
@@ -22,7 +23,6 @@ app.use(
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   })
 );
-app.use(helmet());
 app.use("/api/v1", routes);
 
 // error handler middleware, it should be the last middleware

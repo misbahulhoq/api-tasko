@@ -33,12 +33,10 @@ export const envVars: EnvConfig = {
   MONGO_URI: process.env.MONGO_URI as string,
   JWT_SECRET: process.env.JWT_SECRET as string,
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN as string,
-  NODE_ENV: (process.env.NODE_ENV || "development") as
-    | "development"
-    | "production",
+  NODE_ENV: process.env.NODE_ENV as "development" | "production",
   PORT: process.env.PORT,
   CLIENT_ORIGIN: process.env.CLIENT_ORIGIN || "http://localhost:3000",
-  SALT_ROUND: Number(process.env.SALT_ROUND || 10),
+  SALT_ROUND: Number(process.env.SALT_ROUND),
   EMAIL: process.env.EMAIL as string,
   EMAIL_APP_PASS: process.env.EMAIL_APP_PASS as string,
 };

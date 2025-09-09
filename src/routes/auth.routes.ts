@@ -51,8 +51,41 @@ router.post(
   validateRequest(AuthValidatorSchemas.signup),
   AuthControllers.signup
 );
-router.get("/get-email", AuthControllers.sendUsersEmail);
+
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Login a user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: john@example.com
+ *               password:
+ *                 type: string
+ *                 example: strongpassword123
+ *     responses:
+ *       200:
+ *         description: User logged in successfully
+ *       401:
+ *         description: Invalid credentials
+ *       404:
+ *         description: User not found
+ */
+
 router.post("/login", AuthControllers.login);
+router.get("/get-email", AuthControllers.sendUsersEmail);
 router.post("/verify-login", AuthControllers.verifyLoginCode);
 router.post("/request-new-otp", AuthControllers.getNewVerificationCode);
 router.post("/me", AuthControllers.getUserInfo);

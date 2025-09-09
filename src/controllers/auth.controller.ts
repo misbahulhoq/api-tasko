@@ -42,6 +42,7 @@ const sendUsersEmail = async (req: Request, res: Response) => {
 
 const login = async (req: Request, res: Response) => {
   const user = await AuthServices.login(req.body);
+
   res.cookie("email", user.email, { httpOnly: true, sameSite: "lax" });
   sendResponse(res, {
     statusCode: 200,

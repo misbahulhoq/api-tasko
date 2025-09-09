@@ -21,18 +21,15 @@ export function globalErrorHandler(
   }
 
   if (error instanceof AppError) {
-    console.log("An app error is happening.");
     message = error.message;
     statusCode = error.statusCode;
   } else if (isMongooseError) {
-    console.log("A mongoose error is happening.");
     statusCode = 400;
     stack = error.stack;
     if (error.name === "ValidationError") {
       error.message = error.message;
     }
   } else if (isZodError) {
-    console.log("A zod error is happening.");
     statusCode = 400;
     stack = error.stack;
     message = error.message;
