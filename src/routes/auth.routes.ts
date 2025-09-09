@@ -2,6 +2,7 @@ import { Router } from "express";
 import { AuthControllers } from "../controllers/auth.controller";
 import { validateRequest } from "../middlewares/validate.middleware";
 import AuthValidatorSchemas from "../validations/auth.validation";
+import { auth } from "../middlewares/auth";
 
 const router = Router();
 
@@ -88,6 +89,6 @@ router.post("/login", AuthControllers.login);
 router.get("/get-email", AuthControllers.sendUsersEmail);
 router.post("/verify-login", AuthControllers.verifyLoginCode);
 router.post("/request-new-otp", AuthControllers.getNewVerificationCode);
-router.post("/me", AuthControllers.getUserInfo);
+router.post("/me", auth(), AuthControllers.getUserInfo);
 
 export const AuthRoutes = router;

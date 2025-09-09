@@ -77,4 +77,35 @@ describe("Auth", () => {
         .expect(404);
     });
   });
+
+  describe("Verify Otp and get user info", () => {
+    it("Should pass if valid otp and valid accessToken provided", async () => {
+      const user = await User.findOne({ email: testUser.email });
+      const response = await request(app)
+        .post("/api/v1/auth/verify-login")
+        .set("Cookie", [`email=${testUser.email}`])
+        .send({ code: user?.loginVerification?.code });
+      expect(response.body.data).not.toBeNull();
+      expect(response.body.data).toHaveProperty("accessToken");
+
+      await request(app)
+        .post("/api/v1/auth/me")
+        .set("Cookie", [`accessToken=${response.body.data.accessToken}`])
+        .expect(200);
+    });
+
+    it("Should fail if invalid otp and invalid accessToken provided", async () => {
+      const user = await User.findOne({ email: testUser.email });
+      const response = await request(app)
+        .post("/api/v1/auth/verify-login")
+        .set("Cookie", [`email=${testUser.email}`])
+        .send({ code: 101011 })
+        .expect(400);
+
+      await request(app)
+        .post("/api/v1/auth/me")
+        .set("Cookie", [`accessToken=invalidAccessToken`])
+        .expect(401);
+    });
+  });
 });
