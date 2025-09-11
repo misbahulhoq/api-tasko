@@ -1,13 +1,13 @@
 import express from "express";
-import verifyUser from "../middlewares/verifyuser.middleware";
 import { TaskControllers } from "../controllers/task.controller";
+import { auth } from "../middlewares/auth";
 
 const router = express.Router();
 
-router.get("/", verifyUser, (req, res) => {
+router.get("/", auth(), (req, res) => {
   res.send("Task routes");
 });
 
-router.post("/", verifyUser, TaskControllers.createTask);
+router.post("/", auth(), TaskControllers.createTask);
 
 export const TaskRoutes = router;

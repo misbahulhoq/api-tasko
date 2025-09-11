@@ -89,6 +89,7 @@ const verifyLoginCode = async (req: Request, res: Response) => {
   );
   res.cookie("accessToken", token, { httpOnly: true, sameSite: "lax" });
   res.clearCookie("email", { httpOnly: true, sameSite: "lax" });
+  res.cookie("email", user.email, { httpOnly: true, sameSite: "lax" });
   sendResponse(res, {
     statusCode: 200,
     success: true,
