@@ -52,6 +52,16 @@ const login = async (req: Request, res: Response) => {
   });
 };
 
+const logout = async (req: Request, res: Response) => {
+  res.clearCookie("accessToken");
+  sendResponse(res, {
+    success: true,
+    message: "Logout successfull",
+    statusCode: 200,
+    data: null,
+  });
+};
+
 const getNewVerificationCode = async (req: Request, res: Response) => {
   const email = req.cookies.email;
   if (!email) {
@@ -82,6 +92,7 @@ const verifyLoginCode = async (req: Request, res: Response) => {
       statusCode: 400,
     });
   }
+
   const user = await AuthServices.verifyLoginCode(email, code);
   const token = jwt.sign(
     { email: user.email, _id: user._id },
@@ -108,11 +119,24 @@ const getUserInfo = async (req: Request, res: Response) => {
   });
 };
 
+const sendOtpInTest = async (req: Request, res: Response) => {
+  const { email } = req.body;
+  const user = await AuthServices.sendOtpInTest(email);
+  sendResponse(res, {
+    success: true,
+    message: "OTP sent successfully",
+    statusCode: 200,
+    data: { code: user.loginVerification?.code },
+  });
+};
+
 export const AuthControllers = {
   signup,
   verifyLoginCode,
   sendUsersEmail,
   login,
+  logout,
   getNewVerificationCode,
   getUserInfo,
+  sendOtpInTest,
 };

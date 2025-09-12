@@ -1,3 +1,4 @@
+import envVars from "../config/env.config";
 import User, { IUser } from "../models/user.model";
 import AppError from "../utils/AppError";
 import { sendVerificationEmail } from "../utils/email.validator";
@@ -46,7 +47,9 @@ export const login = async (payload: {
     expires: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes
   };
   await user.save();
-  await sendVerificationEmail(email, verificationCode);
+  if (envVars.NODE_ENV !== "development")
+    await sendVerificationEmail(email, verificationCode);
+
   return { email };
 };
 
@@ -99,12 +102,19 @@ export const getUserInfo = async (email: string): Promise<IUser> => {
   return user;
 };
 
+const sendOtpInTest = async (email: string): Promise<IUser> => {
+  const user = await User.findOne({ email });
+  if (!user) throw new AppError(404, "User not found");
+  return user;
+};
+
 export const AuthServices = {
   login,
   signup,
   verifyLoginCode,
   generateNewVerificationCode,
   getUserInfo,
+  sendOtpInTest,
 };
 
 export default AuthServices;

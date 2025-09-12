@@ -86,9 +86,11 @@ router.post(
  */
 
 router.post("/login", AuthControllers.login);
+router.post("/send-otp/test", AuthControllers.sendOtpInTest);
 router.get("/get-email", AuthControllers.sendUsersEmail);
 router.post("/verify-login", AuthControllers.verifyLoginCode);
 router.post("/request-new-otp", AuthControllers.getNewVerificationCode);
 router.post("/me", auth(), AuthControllers.getUserInfo);
+router.post("/logout", AuthControllers.logout);
 
 export const AuthRoutes = router;

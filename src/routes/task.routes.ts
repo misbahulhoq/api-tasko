@@ -4,9 +4,7 @@ import { auth } from "../middlewares/auth";
 
 const router = express.Router();
 
-router.get("/", auth(), (req, res) => {
-  res.send("Task routes");
-});
+router.get("/", auth(), TaskControllers.getTasks);
 
 router.post("/", auth(), TaskControllers.createTask);
 
