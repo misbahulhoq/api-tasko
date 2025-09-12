@@ -14,11 +14,11 @@ export const sendVerificationEmail = async (to: string, code: string) => {
   const mailOptions = {
     from: `"Tasko" <${process.env.EMAIL_USER}>`,
     to: to,
-    subject: "Verify Your Account ✔",
+    subject: "Verify Your Login ✔",
     html: `
       <div style="font-family: Arial, sans-serif; text-align: center; color: #333;">
         <h2>Welcome!</h2>
-        <p>Thank you for registering. Please use the following code to verify your account. The code is valid for 5 minutes.</p>
+        <p>Thank you for loging into Tasko. Please use the following code to verify your account. The code is valid for 5 minutes.</p>
         <p style="font-size: 24px; font-weight: bold; letter-spacing: 5px; background: #f0f0f0; padding: 10px 20px; border-radius: 5px;">
           ${code}
         </p>
