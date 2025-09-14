@@ -22,7 +22,22 @@ const getTasks = async (req: Request, res: Response) => {
   });
 };
 
+const updateTask = async (req: Request, res: Response) => {
+  const _id = req.params.taskId;
+  const task = await TaskServices.updateTask({
+    _id,
+    ...req.body,
+  });
+  return sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Task updated successfully.",
+    data: task,
+  });
+};
+
 export const TaskControllers = {
   createTask,
   getTasks,
+  updateTask,
 };

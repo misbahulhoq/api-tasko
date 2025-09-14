@@ -8,4 +8,6 @@ router.get("/", auth(), TaskControllers.getTasks);
 
 router.post("/", auth(), TaskControllers.createTask);
 
+router.put("/:taskId", auth(), TaskControllers.updateTask);
+
 export const TaskRoutes = router;
