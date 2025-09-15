@@ -6,8 +6,8 @@ export interface ITask extends Document {
   user: string;
   status: "pending" | "ongoing" | "done";
   priority: "medium" | "low" | "high";
-  startDate?: Date;
-  endDate?: Date;
+  startDate: Date;
+  endDate: Date;
 }
 
 const taskSchema = new Schema<ITask>(

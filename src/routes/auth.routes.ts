@@ -87,8 +87,61 @@ router.post(
 
 router.post("/login", AuthControllers.login);
 router.post("/send-otp/test", AuthControllers.sendOtpInTest);
+
+/**
+ * @swagger
+ * /auth/get-email:
+ *   get:
+ *     summary: Get user email
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: User email retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ */
 router.get("/get-email", AuthControllers.sendUsersEmail);
+
+/**
+ * @swagger
+ * /auth/verify-login:
+ *   post:
+ *     summary: Verify login code
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - code
+ *             properties:
+ *               code:
+ *                 type: number
+ *                 example: 123456
+ *     responses:
+ *       200:
+ *         description: Login code verified successfully
+ *       400:
+ *         description: Validation error
+ */
 router.post("/verify-login", AuthControllers.verifyLoginCode);
+
+/**
+ * @swagger
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ **/
+
 router.post("/request-new-otp", AuthControllers.getNewVerificationCode);
 router.post("/me", auth(), AuthControllers.getUserInfo);
 router.post("/logout", AuthControllers.logout);

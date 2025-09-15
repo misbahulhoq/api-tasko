@@ -1,6 +1,6 @@
 import Task, { ITask } from "../models/task.model";
 import AppError from "../utils/AppError";
-
+import { daySummary } from "../utils/daySummary";
 const createTask = async (payload: Partial<ITask>) => {
   const { title, description, user, startDate, endDate } = payload;
   if (!title || !description || !user || !startDate || !endDate) {
@@ -24,8 +24,14 @@ const updateTask = async (payload: Partial<ITask>) => {
 };
 
 const getTasks = async (email: string) => {
-  const tasks = await Task.find({ user: email });
-  return tasks;
+  const tasks = await Task.find({ user: email }).lean();
+  const formattedTasks = tasks.map((task) => {
+    return {
+      ...task,
+      ...daySummary(task.startDate, task.endDate),
+    };
+  });
+  return formattedTasks;
 };
 
 export const TaskServices = {
