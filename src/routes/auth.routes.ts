@@ -122,28 +122,58 @@ router.get("/get-email", AuthControllers.sendUsersEmail);
  *                 example: 123456
  *     responses:
  *       200:
- *         description: Login code verified successfully
+ *         message: Login code verified successfully
  *       400:
- *         description: Validation error
+ *         message: Validation error
  */
 router.post("/verify-login", AuthControllers.verifyLoginCode);
 
 /**
  * @swagger
+ * /auth/request-new-otp:
+ *   post:
+ *     summary: Verify login code
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Login code verified successfully
+ *         content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  message:
+ *                    type: string
  *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- **/
-
+ *       400:
+ *         message: Validation error
+ */
 router.post("/request-new-otp", AuthControllers.getNewVerificationCode);
+
+/**
+ * @swagger
+ * /auth/me:
+ *   post:
+ *     summary: Get user info
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: User info retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ */
 router.post("/me", auth(), AuthControllers.getUserInfo);
+
+/**
+ * @swagger
+ * /auth/logout:
+ *   post:
+ *     summary: Logout a user
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: User logged out successfully
+ */
 router.post("/logout", AuthControllers.logout);
 
 export const AuthRoutes = router;
