@@ -34,8 +34,17 @@ const getTasks = async (email: string) => {
   return formattedTasks;
 };
 
+const getTaskById = async (id: string) => {
+  const task = await Task.findOne({ _id: id }).lean();
+  if (!task) {
+    throw new AppError(404, "Task not found");
+  }
+  return task;
+};
+
 export const TaskServices = {
   createTask,
   getTasks,
+  getTaskById,
   updateTask,
 };

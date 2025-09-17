@@ -22,6 +22,17 @@ const getTasks = async (req: Request, res: Response) => {
   });
 };
 
+const getTaskById = async (req: Request, res: Response) => {
+  const _id = req.params.taskId;
+  const task = await TaskServices.getTaskById(_id);
+  return sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Task fetched successfully.",
+    data: task,
+  });
+};
+
 const updateTask = async (req: Request, res: Response) => {
   const _id = req.params.taskId;
   const task = await TaskServices.updateTask({
@@ -39,5 +50,6 @@ const updateTask = async (req: Request, res: Response) => {
 export const TaskControllers = {
   createTask,
   getTasks,
+  getTaskById,
   updateTask,
 };
