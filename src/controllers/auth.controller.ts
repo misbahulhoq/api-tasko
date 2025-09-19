@@ -43,11 +43,16 @@ const sendUsersEmail = async (req: Request, res: Response) => {
 const login = async (req: Request, res: Response) => {
   const user = await AuthServices.login(req.body);
 
-  res.cookie("email", user.email, { httpOnly: true, sameSite: "lax" });
+  res.cookie("email", user.email, {
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+    maxAge: 5 * 60 * 1000, // 5 minutes
+  });
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: "Login successful. Redirecting to veficiation page..",
+    message: "Login successful. Redirecting to verificiation page..",
     data: null,
   });
 };
