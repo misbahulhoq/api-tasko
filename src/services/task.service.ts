@@ -48,9 +48,19 @@ const getTaskById = async (id: string) => {
   return { ...task, daySummary: summary, daysRemaining };
 };
 
+const deleteTask = async (id: string) => {
+  const task = await Task.findOne({ _id: id });
+  if (!task) {
+    throw new AppError(404, "Task not found");
+  }
+  await Task.deleteOne({ _id: id });
+  return task;
+};
+
 export const TaskServices = {
   createTask,
   getTasks,
   getTaskById,
   updateTask,
+  deleteTask,
 };

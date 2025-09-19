@@ -47,9 +47,21 @@ const updateTask = async (req: Request, res: Response) => {
   });
 };
 
+const deleteTask = async (req: Request, res: Response) => {
+  const _id = req.params.taskId;
+  const task = await TaskServices.deleteTask(_id);
+  return sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Task deleted successfully.",
+    data: task,
+  });
+};
+
 export const TaskControllers = {
   createTask,
   getTasks,
   getTaskById,
   updateTask,
+  deleteTask,
 };

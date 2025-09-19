@@ -200,4 +200,41 @@ router.post("/", auth(), TaskControllers.createTask);
  */
 router.put("/:taskId", auth(), TaskControllers.updateTask);
 
+/**
+ * @swagger
+ * /tasks/{taskId}:
+ *   delete:
+ *     summary: Delete a task by its ID.
+ *     tags: [Task]
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The task ID
+ *     responses:
+ *       200:
+ *         description: Task deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 200
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Task deleted successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/Task'
+ *       404:
+ *         description: Task not found
+ */
+router.delete("/:taskId", auth(), TaskControllers.deleteTask);
+
 export const TaskRoutes = router;
