@@ -36,10 +36,16 @@ const getTasks = async (email: string) => {
 
 const getTaskById = async (id: string) => {
   const task = await Task.findOne({ _id: id }).lean();
+
   if (!task) {
     throw new AppError(404, "Task not found");
   }
-  return task;
+  const { daySummary: summary, daysRemaining } = daySummary(
+    task.startDate,
+    task.endDate
+  );
+
+  return { ...task, daySummary: summary, daysRemaining };
 };
 
 export const TaskServices = {
