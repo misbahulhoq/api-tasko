@@ -11,6 +11,8 @@ interface EnvConfig {
   SALT_ROUND: number;
   EMAIL: string;
   EMAIL_APP_PASS: string;
+  PUBLIC_VAPID_KEY: string;
+  PRIVATE_VAPID_KEY: string;
 }
 
 const requiredEnvVars: (keyof EnvConfig)[] = [
@@ -21,6 +23,8 @@ const requiredEnvVars: (keyof EnvConfig)[] = [
   "CLIENT_ORIGIN",
   "EMAIL",
   "EMAIL_APP_PASS",
+  "PUBLIC_VAPID_KEY",
+  "PRIVATE_VAPID_KEY",
 ];
 
 requiredEnvVars.map((key) => {
@@ -39,6 +43,8 @@ export const envVars: EnvConfig = {
   SALT_ROUND: Number(process.env.SALT_ROUND),
   EMAIL: process.env.EMAIL as string,
   EMAIL_APP_PASS: process.env.EMAIL_APP_PASS as string,
+  PUBLIC_VAPID_KEY: process.env.PUBLIC_VAPID_KEY as string,
+  PRIVATE_VAPID_KEY: process.env.PRIVATE_VAPID_KEY as string,
 };
 
 export default envVars;

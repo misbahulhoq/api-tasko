@@ -6,42 +6,47 @@ import User from "../models/user.model";
 
 export function auth(...roles: string[]) {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const accessToken = req.cookies.accessToken;
-    // if no argument is provided, it means that all logged in users can access it.
-    if (roles.length === 0) {
+    try {
+      const accessToken = req.cookies.accessToken;
+
+      // ✅ Case 1: No token found
       if (!accessToken) {
-        return res.status(401).send({ message: "Forbidden access." });
+        return next(new AppError(401, "Authentication token is required"));
       }
+
+      // ✅ Verify JWT
+      let decoded: JwtPayload;
       try {
-        const decoded = jwt.verify(accessToken, envVars.JWT_SECRET);
-        const email = (decoded as JwtPayload).email;
-        const user = await User.findOne({ email });
-        const userObject = user?.toObject();
-        delete userObject?.loginVerification;
-        (req as any).user = userObject;
-        next();
+        decoded = jwt.verify(accessToken, envVars.JWT_SECRET) as JwtPayload;
       } catch (err: any) {
-        throw new AppError(401, err.message || "Forbidden access.");
+        // Log exact reason internally, but don’t leak to client
+        console.error("JWT verification failed:", err?.message);
+        return next(new AppError(401, "Invalid or expired token"));
       }
-    } else {
-      // Only selected users can access.
-      try {
-        const decoded = jwt.verify(
-          accessToken,
-          envVars.JWT_SECRET
-        ) as JwtPayload;
-        const email = decoded.email;
-        if (!roles.includes(decoded?.role as string)) {
-          throw new AppError(401, "Forbidden access.");
-        }
-        const user = await User.findOne({ email });
-        const userObject = user?.toObject();
-        delete userObject?.loginVerification;
-        (req as any).user = userObject;
-        next();
-      } catch (err: any) {
-        throw new AppError(401, err.message || "Forbidden access.");
+
+      // ✅ Check role (if roles are provided)
+      if (roles.length > 0 && !roles.includes(decoded?.role as string)) {
+        return next(new AppError(403, "Forbidden access"));
       }
+
+      // ✅ Fetch user from DB
+      const email = decoded.email;
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        return next(new AppError(401, "Invalid or expired token"));
+      }
+
+      const userObject = user.toObject();
+      delete userObject.loginVerification;
+
+      (req as any).user = userObject;
+
+      next();
+    } catch (err) {
+      // ✅ Catch any unexpected errors
+      console.error("Auth middleware error:", err);
+      next(new AppError(500, "Internal server error"));
     }
   };
 }
