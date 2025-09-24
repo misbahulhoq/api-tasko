@@ -36,7 +36,9 @@ export function globalErrorHandler(
   }
   response.status(statusCode).send({
     success: false,
+    statusCode,
     message,
     stack: envVars.NODE_ENV === "development" ? stack : undefined,
+    data: null,
   });
 }

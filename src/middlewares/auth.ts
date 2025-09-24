@@ -11,7 +11,7 @@ export function auth(...roles: string[]) {
 
       // ✅ Case 1: No token found
       if (!accessToken) {
-        return next(new AppError(401, "Authentication token is required"));
+        throw new AppError(401, "Authentication token is required");
       }
 
       // ✅ Verify JWT
@@ -20,33 +20,31 @@ export function auth(...roles: string[]) {
         decoded = jwt.verify(accessToken, envVars.JWT_SECRET) as JwtPayload;
       } catch (err: any) {
         // Log exact reason internally, but don’t leak to client
-        console.error("JWT verification failed:", err?.message);
-        return next(new AppError(401, "Invalid or expired token"));
+        // console.error("JWT verification failed:", err?.message);
+        throw new AppError(401, "Invalid or expired token");
       }
 
       // ✅ Check role (if roles are provided)
       if (roles.length > 0 && !roles.includes(decoded?.role as string)) {
-        return next(new AppError(403, "Forbidden access"));
+        throw new AppError(403, "Forbidden access");
       }
 
       // ✅ Fetch user from DB
       const email = decoded.email;
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email }).lean();
 
       if (!user) {
-        return next(new AppError(401, "Invalid or expired token"));
+        throw new AppError(401, "Invalid or expired token");
       }
+      delete user.loginVerification;
 
-      const userObject = user.toObject();
-      delete userObject.loginVerification;
-
-      (req as any).user = userObject;
+      (req as any).user = user;
 
       next();
-    } catch (err) {
+    } catch (err: any) {
       // ✅ Catch any unexpected errors
       console.error("Auth middleware error:", err);
-      next(new AppError(500, "Internal server error"));
+      throw new AppError(401, err?.message || "Internal server error");
     }
   };
 }

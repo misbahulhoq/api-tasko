@@ -88,10 +88,11 @@ describe("Auth", () => {
       expect(response.body.data).not.toBeNull();
       expect(response.body.data).toHaveProperty("accessToken");
 
-      await request(app)
+      const userData = await request(app)
         .post("/api/v1/auth/me")
         .set("Cookie", [`accessToken=${response.body.data.accessToken}`])
         .expect(200);
+      expect(userData.body.data).not.toHaveProperty("password");
     });
 
     it("Should fail if invalid otp and invalid accessToken provided", async () => {

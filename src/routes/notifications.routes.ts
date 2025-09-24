@@ -1,15 +1,8 @@
 import express from "express";
-import Subscription from "../models/subscription.model";
-import { auth } from "../middlewares/auth";
+import { NotificationControllers } from "../controllers/subscription.controller";
 
 const router = express.Router();
 
-router.post("/subscribe", async (req, res) => {
-  const subscription = req.body;
-  console.log("trying to crate a subscription");
-  await Subscription.create(subscription);
-  console.log("subscription created");
-  res.send({ message: "Subscribed successfully" });
-});
+router.post("/subscribe", NotificationControllers.subscribe);
 
 export const NotificationRoutes = router;
