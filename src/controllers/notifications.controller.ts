@@ -11,6 +11,14 @@ const subscribe = async (req: Request, res: Response) => {
   });
 };
 
-const notify = async (req: Request, res: Response) => {};
+const notify = async (req: Request, res: Response) => {
+  await NotificationServices.notify();
+  sendResponse(res, {
+    statusCode: 200,
+    message: "Notifications sent successfully",
+    success: true,
+    data: null,
+  });
+};
 
 export const NotificationControllers = { subscribe, notify };
