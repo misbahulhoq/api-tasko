@@ -100,7 +100,7 @@ const verifyLoginCode = async (req: Request, res: Response) => {
 
   const user = await AuthServices.verifyLoginCode(email, code);
   const token = jwt.sign(
-    { email: user.email, _id: user._id },
+    { email: user.email, _id: user._id, role: user.role },
     envVars.JWT_SECRET
   );
   res.cookie("accessToken", token, { httpOnly: true, sameSite: "lax" });

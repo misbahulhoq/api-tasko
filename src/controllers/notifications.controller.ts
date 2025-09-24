@@ -11,4 +11,6 @@ const subscribe = async (req: Request, res: Response) => {
   });
 };
 
-export const NotificationControllers = { subscribe };
+const notify = async (req: Request, res: Response) => {};
+
+export const NotificationControllers = { subscribe, notify };
