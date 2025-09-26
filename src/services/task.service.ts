@@ -23,15 +23,33 @@ const updateTask = async (payload: Partial<ITask>) => {
   return task;
 };
 
-const getTasks = async (email: string) => {
-  const tasks = await Task.find({ user: email }).lean();
+const getTasks = async (payload: {
+  email: string;
+  page?: string;
+  limit?: string;
+  status?: "pending" | "ongoing" | "done";
+  query?: string;
+}) => {
+  const { email, query, page, limit } = payload;
+  const skip = (Number(page || 1) - 1) * Number(limit || 10);
+
+  const tasks = await Task.find({
+    user: email,
+    $or: [{ title: query }, { description: query }],
+  })
+    .skip(skip)
+    .limit(10)
+    .lean();
+
+  const total = await Task.find({ user: email }).countDocuments();
+  const totalPages = Math.ceil(total / Number(limit));
   const formattedTasks = tasks.map((task) => {
     return {
       ...task,
       ...daySummary(task.startDate, task.endDate),
     };
   });
-  return formattedTasks;
+  return { formattedTasks, totalPages };
 };
 
 const getTaskById = async (id: string) => {

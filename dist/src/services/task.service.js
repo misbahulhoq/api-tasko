@@ -36,12 +36,22 @@ const updateTask = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     yield task_model_1.default.updateOne({ _id }, payload);
     return task;
 });
-const getTasks = (email) => __awaiter(void 0, void 0, void 0, function* () {
-    const tasks = yield task_model_1.default.find({ user: email }).lean();
+const getTasks = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, query, page, limit } = payload;
+    const skip = (Number(page || 1) - 1) * Number(limit || 10);
+    const tasks = yield task_model_1.default.find({
+        user: email,
+        $or: [{ title: query }, { description: query }],
+    })
+        .skip(skip)
+        .limit(10)
+        .lean();
+    const total = yield task_model_1.default.find({ user: email }).countDocuments();
+    const totalPages = Math.ceil(total / Number(limit));
     const formattedTasks = tasks.map((task) => {
         return Object.assign(Object.assign({}, task), (0, daySummary_1.daySummary)(task.startDate, task.endDate));
     });
-    return formattedTasks;
+    return { formattedTasks, totalPages };
 });
 const getTaskById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const task = yield task_model_1.default.findOne({ _id: id }).lean();
