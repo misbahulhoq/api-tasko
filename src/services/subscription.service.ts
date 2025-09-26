@@ -1,6 +1,8 @@
 import Subscription, { ISubscription } from "../models/notifications.model";
 import AppError from "../utils/AppError";
 import webpush from "../config/webpush.config";
+import cron from "node-cron";
+import Task from "../models/task.model";
 
 const subscribe = async (payload: ISubscription & { email: string }) => {
   if (!payload.email) throw new AppError(400, "Email is required");
@@ -9,19 +11,58 @@ const subscribe = async (payload: ISubscription & { email: string }) => {
 };
 
 const notify = async () => {
-  const subscriptions = await Subscription.find();
+  const subscriptions = await Subscription.find().lean();
   if (subscribe.length === 0) {
     return;
   }
 
-  const payload = JSON.stringify({
-    title: "⏰ Reminder",
-    body: "testing background notification",
+  const now = new Date();
+  const threeDaysLater = new Date();
+  threeDaysLater.setDate(now.getDate() + 3);
+
+  const emails = subscriptions.map((sub) => sub.email);
+  emails.forEach(async (email) => {
+    const tasks = await Task.aggregate([
+      {
+        $match: {
+          user: email,
+          status: { $ne: "completed" },
+        },
+      },
+      {
+        $match: { endDate: { $gte: now, $lte: threeDaysLater } },
+      },
+      {
+        $addFields: {
+          remainingDays: {
+            $ceil: {
+              $divide: [{ $subtract: ["$endDate", now] }, 1000 * 60 * 60 * 24],
+            },
+          },
+        },
+      },
+      { $sort: { remainingDays: 1 } },
+    ]);
+
+    if (tasks.length > 0) {
+      subscriptions.forEach((sub) => {
+        webpush.sendNotification(
+          sub,
+          JSON.stringify({
+            title: `You have ${tasks.length} pending task${
+              tasks.length > 1 ? "s" : ""
+            }`,
+            message: "Click to see them.",
+          })
+        );
+      });
+    }
   });
-  subscriptions.forEach((sub) => {
-    webpush.sendNotification(sub, payload);
-  });
+
+  console.log("sending a notification on each 50 seconds");
 };
+
+cron.schedule("*/50 * * * * *", notify);
 
 export const NotificationServices = {
   subscribe,
