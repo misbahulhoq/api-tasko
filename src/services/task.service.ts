@@ -31,18 +31,28 @@ const getTasks = async (payload: {
   query?: string;
 }) => {
   const { email, query, page, limit } = payload;
-
   const skip = (Number(page || 1) - 1) * Number(limit || 10);
 
   const tasks = await Task.find({
     user: email,
-    $or: query ? [{ title: query || "" }, { description: query || "" }] : [{}],
+    $or: query
+      ? [
+          { title: { $regex: query || "", $options: "i" } },
+          { description: { $regex: query || "", $options: "i" } },
+        ]
+      : [{}],
   })
     .skip(skip)
     .limit(Number(limit || 10))
     .lean();
 
-  const total = await Task.find({ user: email }).countDocuments();
+  let total: number;
+  if (query) {
+    total = tasks.length;
+  } else {
+    total = await Task.find({ user: email }).countDocuments();
+  }
+
   const totalPages = Math.ceil(total / Number(limit));
 
   const formattedTasks = tasks.map((task) => {
