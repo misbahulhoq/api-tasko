@@ -35,10 +35,10 @@ const getTasks = async (payload: {
 
   const tasks = await Task.find({
     user: email,
-    $or: [{ title: query }, { description: query }],
+    $or: query ? [{ title: query || "" }, { description: query || "" }] : [{}],
   })
     .skip(skip)
-    .limit(10)
+    .limit(Number(limit || 10))
     .lean();
 
   const total = await Task.find({ user: email }).countDocuments();
@@ -49,7 +49,7 @@ const getTasks = async (payload: {
       ...daySummary(task.startDate, task.endDate),
     };
   });
-  return { formattedTasks, totalPages };
+  return { tasks: formattedTasks, totalPages };
 };
 
 const getTaskById = async (id: string) => {

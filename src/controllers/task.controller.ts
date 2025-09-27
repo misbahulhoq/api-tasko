@@ -13,12 +13,16 @@ const createTask = async (req: Request, res: Response) => {
 };
 
 const getTasks = async (req: Request, res: Response) => {
-  const tasks = await TaskServices.getTasks(req.cookies.email);
+  const { tasks, totalPages } = await TaskServices.getTasks({
+    email: (req as any).user.email,
+    ...req.body,
+  });
+
   return sendResponse(res, {
     statusCode: 200,
     success: true,
     message: "Tasks fetched successfully.",
-    data: tasks,
+    data: { tasks, totalPages },
   });
 };
 
