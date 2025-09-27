@@ -60,6 +60,22 @@ const router = express_1.default.Router();
  *   get:
  *     summary: Get all the tasks of a user.
  *     tags: [Task]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: The number of the page for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Items to show per page
+ *       - in: query
+ *         name: query
+ *         schema:
+ *           type: string
+ *         description: A string to search tasks by title or description
  *     responses:
  *       200:
  *         description: Successfully retrieved the tasks
@@ -78,9 +94,15 @@ const router = express_1.default.Router();
  *                   type: string
  *                   example: Successfully retrieved the tasks
  *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Task'
+ *                   type: object
+ *                   properties:
+ *                     tasks:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Task'
+ *                     totalPages:
+ *                        type: integer
+ *                        example: 10
  *       400:
  *         description: Bad request
  */

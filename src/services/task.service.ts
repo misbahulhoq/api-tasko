@@ -31,6 +31,7 @@ const getTasks = async (payload: {
   query?: string;
 }) => {
   const { email, query, page, limit } = payload;
+
   const skip = (Number(page || 1) - 1) * Number(limit || 10);
 
   const tasks = await Task.find({
@@ -43,6 +44,7 @@ const getTasks = async (payload: {
 
   const total = await Task.find({ user: email }).countDocuments();
   const totalPages = Math.ceil(total / Number(limit));
+
   const formattedTasks = tasks.map((task) => {
     return {
       ...task,

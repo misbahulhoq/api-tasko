@@ -25,7 +25,7 @@ const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     });
 });
 const getTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { tasks, totalPages } = yield task_service_1.TaskServices.getTasks(Object.assign({ email: req.user.email }, req.body));
+    const { tasks, totalPages } = yield task_service_1.TaskServices.getTasks(Object.assign({ email: req.user.email }, req.query));
     return (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,

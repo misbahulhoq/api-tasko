@@ -15,7 +15,7 @@ const createTask = async (req: Request, res: Response) => {
 const getTasks = async (req: Request, res: Response) => {
   const { tasks, totalPages } = await TaskServices.getTasks({
     email: (req as any).user.email,
-    ...req.body,
+    ...req.query,
   });
 
   return sendResponse(res, {
