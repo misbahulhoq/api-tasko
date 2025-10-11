@@ -16,7 +16,6 @@ exports.NotificationServices = void 0;
 const notifications_model_1 = __importDefault(require("../models/notifications.model"));
 const AppError_1 = __importDefault(require("../utils/AppError"));
 const webpush_config_1 = __importDefault(require("../config/webpush.config"));
-const node_cron_1 = __importDefault(require("node-cron"));
 const task_model_1 = __importDefault(require("../models/task.model"));
 const subscribe = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     if (!payload.email)
@@ -66,7 +65,7 @@ const notify = () => __awaiter(void 0, void 0, void 0, function* () {
     }));
     console.log("sending a notification on each 50 seconds");
 });
-node_cron_1.default.schedule("*/50 * * * * *", notify);
+// cron.schedule("*/50 * * * * *", notify);
 exports.NotificationServices = {
     subscribe,
     notify,

@@ -112,7 +112,7 @@ const verifyLoginCode = (req, res) => __awaiter(void 0, void 0, void 0, function
         statusCode: 200,
         success: true,
         message: "Login verified. Redirecting to dashboard.",
-        data: { accessToken: token },
+        data: user,
     });
 });
 const getUserInfo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {

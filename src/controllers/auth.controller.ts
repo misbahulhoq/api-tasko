@@ -110,7 +110,7 @@ const verifyLoginCode = async (req: Request, res: Response) => {
     statusCode: 200,
     success: true,
     message: "Login verified. Redirecting to dashboard.",
-    data: { accessToken: token },
+    data: user,
   });
 };
 
