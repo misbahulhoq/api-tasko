@@ -103,9 +103,17 @@ const verifyLoginCode = async (req: Request, res: Response) => {
     { email: user.email, _id: user._id, role: user.role },
     envVars.JWT_SECRET
   );
-  res.cookie("accessToken", token, { httpOnly: true, sameSite: "lax" });
-  res.clearCookie("email", { httpOnly: true, sameSite: "lax" });
-  res.cookie("email", user.email, { httpOnly: true, sameSite: "lax" });
+  res.cookie("accessToken", token, {
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+  });
+  res.clearCookie("email", { httpOnly: true, sameSite: "none", secure: true });
+  res.cookie("email", user.email, {
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+  });
   sendResponse(res, {
     statusCode: 200,
     success: true,

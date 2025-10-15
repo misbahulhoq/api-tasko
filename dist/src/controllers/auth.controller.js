@@ -105,9 +105,17 @@ const verifyLoginCode = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
     const user = yield auth_service_1.default.verifyLoginCode(email, code);
     const token = jsonwebtoken_1.default.sign({ email: user.email, _id: user._id, role: user.role }, env_config_1.default.JWT_SECRET);
-    res.cookie("accessToken", token, { httpOnly: true, sameSite: "lax" });
-    res.clearCookie("email", { httpOnly: true, sameSite: "lax" });
-    res.cookie("email", user.email, { httpOnly: true, sameSite: "lax" });
+    res.cookie("accessToken", token, {
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+    });
+    res.clearCookie("email", { httpOnly: true, sameSite: "none", secure: true });
+    res.cookie("email", user.email, {
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+    });
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
