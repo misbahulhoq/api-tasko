@@ -63,6 +63,7 @@ const logout = async (_req: Request, res: Response) => {
     sameSite: "none",
     secure: true,
   });
+  res.clearCookie("email", { httpOnly: true, sameSite: "none", secure: true });
   sendResponse(res, {
     success: true,
     message: "Logout successful",

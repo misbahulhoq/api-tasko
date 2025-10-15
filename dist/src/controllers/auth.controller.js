@@ -71,6 +71,7 @@ const logout = (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
         sameSite: "none",
         secure: true,
     });
+    res.clearCookie("email", { httpOnly: true, sameSite: "none", secure: true });
     (0, sendResponse_1.default)(res, {
         success: true,
         message: "Logout successful",
