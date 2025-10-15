@@ -37,19 +37,17 @@ const updateTask = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     return task;
 });
 const getTasks = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, search, page: pagePayload, limit: limitPayload } = payload;
+    const { email, search, page: pagePayload, limit: limitPayload, status: statusPayload, } = payload;
     const page = Number(pagePayload || 1);
     const limit = Number(limitPayload || 10);
     const skip = (page - 1) * limit;
-    const tasks = yield task_model_1.default.find({
-        user: email,
-        $or: search
+    const status = statusPayload === "all" ? undefined : statusPayload;
+    const tasks = yield task_model_1.default.find(Object.assign(Object.assign({ user: email }, (status && { status: status })), { $or: search
             ? [
                 { title: { $regex: search || "", $options: "i" } },
                 { description: { $regex: search || "", $options: "i" } },
             ]
-            : [{}],
-    })
+            : [{}] }))
         .skip(skip)
         .limit(limit)
         .lean();
@@ -58,7 +56,7 @@ const getTasks = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         total = tasks.length;
     }
     else {
-        total = yield task_model_1.default.find({ user: email }).countDocuments();
+        total = yield task_model_1.default.find(Object.assign({ user: email }, (status && { status: status }))).countDocuments();
     }
     const totalPages = Math.ceil(total / limit);
     const formattedTasks = tasks.map((task) => {
