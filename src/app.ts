@@ -31,6 +31,7 @@ app.use(
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   })
 );
+
 app.use("/api/v1", routes);
 
 // error handler middleware, it should be the last middleware
