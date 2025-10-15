@@ -65,11 +65,15 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         data: null,
     });
 });
-const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.clearCookie("accessToken");
+const logout = (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.clearCookie("accessToken", {
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+    });
     (0, sendResponse_1.default)(res, {
         success: true,
-        message: "Logout successfull",
+        message: "Logout successful",
         statusCode: 200,
         data: null,
     });

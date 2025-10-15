@@ -57,11 +57,15 @@ const login = async (req: Request, res: Response) => {
   });
 };
 
-const logout = async (req: Request, res: Response) => {
-  res.clearCookie("accessToken");
+const logout = async (_req: Request, res: Response) => {
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+  });
   sendResponse(res, {
     success: true,
-    message: "Logout successfull",
+    message: "Logout successful",
     statusCode: 200,
     data: null,
   });
