@@ -27,16 +27,24 @@ const getTasks = async (payload: {
   email: string;
   page?: string;
   limit?: string;
-  status?: "pending" | "ongoing" | "done";
+  status?: "all" | "pending" | "ongoing" | "done";
   search?: string;
 }) => {
-  const { email, search, page: pagePayload, limit: limitPayload } = payload;
+  const {
+    email,
+    search,
+    page: pagePayload,
+    limit: limitPayload,
+    status: statusPayload,
+  } = payload;
   const page = Number(pagePayload || 1);
   const limit = Number(limitPayload || 10);
   const skip = (page - 1) * limit;
+  const status = statusPayload === "all" ? undefined : statusPayload;
 
   const tasks = await Task.find({
     user: email,
+    ...(status && { status: status }),
     $or: search
       ? [
           { title: { $regex: search || "", $options: "i" } },
@@ -52,7 +60,10 @@ const getTasks = async (payload: {
   if (search) {
     total = tasks.length;
   } else {
-    total = await Task.find({ user: email }).countDocuments();
+    total = await Task.find({
+      user: email,
+      ...(status && { status: status }),
+    }).countDocuments();
   }
 
   const totalPages = Math.ceil(total / limit);

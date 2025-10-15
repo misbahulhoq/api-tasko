@@ -6,6 +6,10 @@ import Task from "../models/task.model";
 
 const subscribe = async (payload: ISubscription & { email: string }) => {
   if (!payload.email) throw new AppError(400, "Email is required");
+  const subscriptionExists = await Subscription.findOne({
+    email: payload.email,
+  });
+  if (subscriptionExists) return subscriptionExists;
   const subscription = await Subscription.create(payload);
   return subscription;
 };
@@ -62,7 +66,7 @@ const notify = async () => {
   console.log("sending a notification on each 50 seconds");
 };
 
-// cron.schedule("*/50 * * * * *", notify);
+cron.schedule("*/50 * * * * *", notify);
 
 export const NotificationServices = {
   subscribe,
