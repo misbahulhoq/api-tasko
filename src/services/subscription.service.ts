@@ -23,7 +23,6 @@ const notify = async () => {
   const now = new Date();
   const threeDaysLater = new Date();
   threeDaysLater.setDate(now.getDate() + 3);
-
   const emails = subscriptions.map((sub) => sub.email);
   emails.forEach(async (email) => {
     const tasks = await Task.aggregate([
@@ -32,9 +31,6 @@ const notify = async () => {
           user: email,
           status: { $ne: "completed" },
         },
-      },
-      {
-        $match: { endDate: { $gte: now, $lte: threeDaysLater } },
       },
       {
         $addFields: {

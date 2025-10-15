@@ -47,9 +47,6 @@ const notify = () => __awaiter(void 0, void 0, void 0, function* () {
                 },
             },
             {
-                $match: { endDate: { $gte: now, $lte: threeDaysLater } },
-            },
-            {
                 $addFields: {
                     remainingDays: {
                         $ceil: {
