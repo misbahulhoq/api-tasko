@@ -56,7 +56,6 @@ const getTasks = async (payload: {
   }
 
   const totalPages = Math.ceil(total / limit);
-  console.log({ totalPages, total });
 
   const formattedTasks = tasks.map((task) => {
     return {

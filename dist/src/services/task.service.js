@@ -61,7 +61,6 @@ const getTasks = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         total = yield task_model_1.default.find({ user: email }).countDocuments();
     }
     const totalPages = Math.ceil(total / limit);
-    console.log({ totalPages, total });
     const formattedTasks = tasks.map((task) => {
         return Object.assign(Object.assign({}, task), (0, daySummary_1.daySummary)(task.startDate, task.endDate));
     });
