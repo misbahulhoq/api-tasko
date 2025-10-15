@@ -37,28 +37,31 @@ const updateTask = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     return task;
 });
 const getTasks = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, query, page, limit } = payload;
-    const skip = (Number(page || 1) - 1) * Number(limit || 10);
+    const { email, search, page: pagePayload, limit: limitPayload } = payload;
+    const page = Number(pagePayload || 1);
+    const limit = Number(limitPayload || 10);
+    const skip = (page - 1) * limit;
     const tasks = yield task_model_1.default.find({
         user: email,
-        $or: query
+        $or: search
             ? [
-                { title: { $regex: query || "", $options: "i" } },
-                { description: { $regex: query || "", $options: "i" } },
+                { title: { $regex: search || "", $options: "i" } },
+                { description: { $regex: search || "", $options: "i" } },
             ]
             : [{}],
     })
         .skip(skip)
-        .limit(Number(limit || 10))
+        .limit(limit)
         .lean();
     let total;
-    if (query) {
+    if (search) {
         total = tasks.length;
     }
     else {
         total = yield task_model_1.default.find({ user: email }).countDocuments();
     }
-    const totalPages = Math.ceil(total / Number(limit));
+    const totalPages = Math.ceil(total / limit);
+    console.log({ totalPages, total });
     const formattedTasks = tasks.map((task) => {
         return Object.assign(Object.assign({}, task), (0, daySummary_1.daySummary)(task.startDate, task.endDate));
     });
