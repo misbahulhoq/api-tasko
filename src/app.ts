@@ -11,6 +11,14 @@ import { swaggerSpec, swaggerUi } from "../swagger.config";
 const app = express();
 connectDb();
 
+let origin;
+
+if (process.env.NODE_ENV === "development") {
+  origin = "http://localhost:3000";
+} else {
+  origin = envVars.CLIENT_ORIGIN;
+}
+
 // middlewares
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(express.json());
@@ -18,7 +26,7 @@ app.use(cookieParser());
 app.use(helmet());
 app.use(
   cors({
-    origin: envVars.CLIENT_ORIGIN,
+    origin,
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   })

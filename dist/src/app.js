@@ -14,13 +14,20 @@ const routes_1 = require("./routes");
 const swagger_config_1 = require("../swagger.config");
 const app = (0, express_1.default)();
 (0, db_config_1.default)();
+let origin;
+if (process.env.NODE_ENV === "development") {
+    origin = "http://localhost:3000";
+}
+else {
+    origin = env_config_1.default.CLIENT_ORIGIN;
+}
 // middlewares
 app.use("/api-docs", swagger_config_1.swaggerUi.serve, swagger_config_1.swaggerUi.setup(swagger_config_1.swaggerSpec));
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
 app.use((0, helmet_1.default)());
 app.use((0, cors_1.default)({
-    origin: env_config_1.default.CLIENT_ORIGIN,
+    origin,
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
 }));
