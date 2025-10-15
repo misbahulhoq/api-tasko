@@ -61,7 +61,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: "Login successful. Redirecting to verificiation page..",
+        message: "Login successful. Redirecting to verification page..",
         data: null,
     });
 });
