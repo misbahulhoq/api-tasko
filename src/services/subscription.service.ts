@@ -59,10 +59,10 @@ const notify = async () => {
     }
   });
 
-  console.log("sending a notification on each 50 seconds");
+  console.log("sending a notification on each 10 minutes");
 };
 
-cron.schedule("*/50 * * * * *", notify);
+cron.schedule("*/10 * * * *", notify);
 
 export const NotificationServices = {
   subscribe,

@@ -66,9 +66,9 @@ const notify = () => __awaiter(void 0, void 0, void 0, function* () {
             });
         }
     }));
-    console.log("sending a notification on each 50 seconds");
+    console.log("sending a notification on each 10 minutes");
 });
-node_cron_1.default.schedule("*/50 * * * * *", notify);
+node_cron_1.default.schedule("*/10 * * * *", notify);
 exports.NotificationServices = {
     subscribe,
     notify,
